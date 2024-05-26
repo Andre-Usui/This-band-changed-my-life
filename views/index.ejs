@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A fan blog of <%=blogTitle.n%> 🤟​</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400..700&family=Danfo:ELSH@0..100&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Reddit+Mono:wght@200..900&display=swap" rel="stylesheet">    
+    <link rel="stylesheet" href="styles/style.css">
+</head>
+<body>
+
+<%- include('partials/header.ejs'); %>
+
+<div class="containerIndex">
+    <div class="title">
+        <h1> <%=blogTitle.n%> 🤟​</h1>
+        <h2>Changed my Life when i heard</h2>
+    </div>
+    <div class="postFeed">
+        <% if (locals.posts.length === 0) { %>
+            <h2>Make your first post bellow!</h2>
+            <% } else { %>
+                <%- include('partials/feed.ejs', ({posts})); %>
+            <% } %>
+
+    <%- include('partials/submitPost.ejs', ({posts})); %>
+
+    </div>
+</div>
+
+
+<%# Irei fazer um novo partial para os posts específicos.  
+    Posso testar de modo individual desta maneira #%>
+
+
+<%- include('partials/footer.ejs', ({blogTitle})); %>
+    
+</body>
+</html>

@@ -1,0 +1,27 @@
+<ul class="postFather">
+
+<% for(var i = 0; i < posts.length;  i++) { %>
+
+    <li class="postElement">
+        <% if (posts[i].edit === true) { %>
+            
+            <%- include('editor.ejs', ({posts, editPost})); %>  
+
+        <% } else { %>
+
+        <h3><%=posts[i].number%> <%=posts[i].title%></h3>
+        <p><%=posts[i].text%></p>
+        <div class="editDelete">
+            <form action="/submitEdit" method="post">
+                <input type="hidden" name="postNum" value="<%=posts[i].number%>">
+                <button type="submit" name="submitEdit" class="submitBtn">Edit</button>
+            </form>
+            <form action="/submitDelete" method="post">
+                <input type="hidden" name="postNum" value="<%=posts[i].number%>">
+                <button type="submit" name="submitDelete" class="submitBtn">Delete</button>
+            </form>
+        </div>        
+    </li>
+<% }} %>
+
+</ul>

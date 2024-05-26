@@ -1,0 +1,47 @@
+<%# here you have some hints about the work of  #%>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A fan blog of <%=blogTitle.n%> 🤟​</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400..700&family=Danfo:ELSH@0..100&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Reddit+Mono:wght@200..900&display=swap" rel="stylesheet">    
+    <link rel="stylesheet" href="styles/style.css">
+</head>
+<body>
+    
+<%- include('partials/header.ejs'); %>
+<div class="container">
+    <div class="bodyAside-left">
+        <p>Get ready to take a musical journey down memory lane! <br><br>
+            Are you ready to relive the moments that made your 
+            heart skip a beat? <br><br>Do you have a band that holds a special place in your heart?
+            On our blog, "This Band Changed My Life", we want to hear your story! <br><br>Here's how
+            you can share your own musical journey:
+        </p>
+    </div>
+    <div class="bodyCenter">
+        <h1>Which band do you want<br>to tell your story with?</h1><br>
+        <form action="/submitTitle" method="post">
+            <input type="text" name="blogTitleStart" id="blogTitleText"><br><br>
+            <input type="submit" value="let's Rock!" class="blogTitleBtn">
+        </form>
+    </div>
+    <div class="bodyAside-right">
+        <p>
+            Choose a band that represents your life story - the one that speaks to you, the one that 
+            makes you feel alive!<br><br>Pick a song that reminds you of a special moment in your life
+            - the one that brings back memories of laughter, tears, or joy!<br><br>Share your story - 
+            tell us about the memories that are tied to that song. <br><br>What was happening in your 
+            life when you first heard it? <br><br>What emotions did it evoke?<br><br>You can edit or 
+            delete your post at any time! We want to hear your authentic voice and story.<br><br>
+            So, what are you waiting for? Start writing your story today and share it with the world!
+        </p>
+    </div>
+</div>
+<%- include('partials/footer.ejs', ({blogTitle})); %>
+
+</body>
+</html>
