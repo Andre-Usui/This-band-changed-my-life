@@ -8,10 +8,11 @@ This was a project proposed by the Capstone project 3 from:
   The Complete 2024 Web Development Bootcamp - by Angela Yu
 
 Some enhancements that i want to do later (now i have to keep tracking my studies and abilities):
-- Make the login functional 
-- More than one Band for login
-- Catch an video of the music from youtube API and the image of the album.
+- Make the login functional;
+- Make headers buttons on portable media;
+- More than one Band for login;
+- Catch an video of the music from youtube API and the ( image of the album - DONE );
 - Set a date of posts (not that hard, but i really need to keep running on the course);
 - Change the links from "footer" to icons (same case as earlier);
 - Set an options button that the user can manipulate the content, style and details of his blog;
-- Can you sugest me? I'd love a chalenge.
+- Can you sugest me? I'd love a chalenge!

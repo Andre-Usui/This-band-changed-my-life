@@ -9,7 +9,9 @@
 
         <% } else { %>
 
-        <h3><%=posts[i].number%> <%=posts[i].title%></h3>
+        <img class="imgFeed" , src=<%=posts[i].cover%> , alt="cover of the album <%=posts[i].album%> of <%=blogTitle.n%>">
+        <h3><%=posts[i].number%> - <%=posts[i].title%></h3>
+        <p>Album: <%=posts[i].album%></p>
         <p><%=posts[i].text%></p>
         <div class="editDelete">
             <form action="/submitEdit" method="post">
