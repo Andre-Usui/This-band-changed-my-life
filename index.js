@@ -4,105 +4,96 @@ import axios from "axios";
 
 const app = express();
 const port = 3000;
-const APIKeyLastFM = "ef77440ab93f633656239025d6bf900c";
-const APILastFM = "https://ws.audioscrobbler.com/2.0"
+const APIKeyLastFM = "ef77440ab93f633656239025d6bf900c";  //TODO: add .env 
+const APILastFM = "https://ws.audioscrobbler.com/2.0";
 
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.static('public'));
 
-/* Planos para o blog: 
-    1a fase: Criar um blog editável;
-    Para este caso, irei fazer um blog de fã base, dizendo qual música é sua favorita e porque.
+/* 
+############################################################
 
-        - Fase de criação: 
-            - Permitir inserir o Title:
-                - Title será representado no H1 e no nome da página (HEAD)
-                - buscar formas ou estratégias para que esta seja a primeira página
-                mas apenas caso o title não tenha sido registrado.
-####################
+Aprimoramentos para o blog: 
+    1 - Alterar funcionamento para que o usuário possa escolher mais de uma banda;
+    2 - Integrar DB via Postegres;
+    3 - Integrar Login; 
+    4 - Integrar novos estilos customizáveis para o site;
+    5 - Integrar API do youtube funcional e leve;
+    6 - Integrar Secrets / Alterar o APIKEY;
+    7 - Alterar feed.ejs de for para forEach.
+
+############################################################
+
+    2a fase: fazer um construtor de blog;
+    3a fase: Iloveyoulist. Faça uma carta elogiando boas características e dando 
+    oportunidade para a pessoa continuar a escrever características.
+
+############################################################
 */
 
-var blogTitle = {n: ''};   // colocar todas estas variáveis em um único objeto.
-//var edit = false;
+var blogTitle = {n: ''};   // TODO: colocar todas estas variáveis em um único objeto.
 var editPost;
 var posts = [];
-var errorName = false;
+//var errorName = false; //TODO: Sinalizar ao usuário que ele errou o nome do album. 
 
-function Post(number, title, album, cover, text, edit) {
-    this.number = NaN;
-    this.title = '';
-    this.album = '';
-    this.cover = '';
-    this.text = '';
-    this.edit = false;
+function Post(number=NaN, title='', album='', cover='', text='', edit=false) { //default parameters
+    this.number = number;
+    this.title = title;
+    this.album = album;
+    this.cover = cover;
+    this.text = text;
+    this.edit = edit;
 };
 
-
-
 app.get('/', (req, res) => {
-    if (blogTitle.n === '') { 
-        res.render('start.ejs', ({blogTitle, posts})); //edit removed
-    }else {
-        res.render('index.ejs', ({blogTitle, posts}));//edit removed
-    };
+    let templateName = 'start.ejs';
+    if(blogTitle.n !== ''){templateName = 'index.ejs';};
+    res.render(templateName, ({blogTitle, posts}));
+    
 });
 
 app.get('/aboutus', (req, res) => {
-    res.render('aboutUs.ejs', ({blogTitle, posts}));//edit removed
-
+    res.render('aboutUs.ejs', ({blogTitle, posts}));
 });
 
 app.post('/submitTitle', (req, res) =>{
     blogTitle.n = req.body["blogTitleStart"];
-    res.render('index.ejs', ({blogTitle, posts})); //edit removed - quero utilizar res.redirect
+    res.render('index.ejs', ({blogTitle, posts}));
 });
 
-app.post('/submitPost', (req, res) =>{  //gerando post
+app.post('/submitPost', async (req, res) =>{  
     console.log(`the submitPost has been called`);
-    async function generatePostObject() {
-        for (var i = 0; i <= posts.length; i++) { 
-            if (!posts[i]) {
-                posts[i] = new Post();
-                posts[i].number = (i + 1);
-                posts[i].title = req.body["postTitle"];
-                posts[i].album = req.body["postAlbum"];
-                posts[i].text = req.body["postText"];
-                console.log(`the posts is  band ${blogTitle.n} of ${posts[i].number} - ${posts[i].title} - album ${posts[i].album} and  ${posts[i].text}`)
-                try{
-                    const result = await axios.get(APILastFM, {
-                        params: {
-                            method: "album.getinfo",
-                            api_key: APIKeyLastFM,
-                            artist: blogTitle.n,
-                            album: posts[i].album,
-                            format: 'json'
-                        }});
-                                       
-                    posts[(i)].cover = result.data.album.image[3]["#text"];
-                    console.log(`this is the link of cover: ${posts[i].cover}`);
-                    i++;
-                    console.log(`the submitPost has ended`);
-                    res.render('index.ejs', ({blogTitle, posts}));//edit removed
-                } catch (error) {
-                    await console.log(`an error occurs: ${error.message}`);
-                    posts[(i)].cover = "/imgs/question-mark.jpg";
-                    i++;
-                    res.render('index.ejs', ({blogTitle, posts}));
-                }
-               
-            };
-        };
-    };
+    try{
+        const result = await axios.get(APILastFM, {
+            params: {
+                method: "album.getinfo",
+                api_key: APIKeyLastFM,
+                artist: blogTitle.n,
+                album: req.body["postAlbum"],
+                format: 'json'
+            }});
+        var albumCover = result.data.album.image[3]["#text"];
+        console.log(`this is the link of cover: ${albumCover}`);
+        console.log(`the submitPost has ended`);
        
-    generatePostObject();
-
-    
-}); 
+    } catch (error) {
+        await console.log(`an error occurs: ${error.message}`);
+        albumCover = "/imgs/question-mark.jpg";         
+    }
+    posts.push(new Post(
+        (posts.length+1), 
+        req.body["postTitle"], 
+        req.body["postAlbum"], 
+        albumCover, 
+        req.body["postText"]
+    ));  
+    res.render('index.ejs', ({blogTitle, posts}));
+    }); 
 
 app.post('/submitEdit', (req, res) =>{        
     editPost = posts[(req.body.postNum - 1)];  
     editPost.edit = true;
-    res.render('index.ejs', ({blogTitle, posts, editPost})); //edit removed
+    res.render('index.ejs', ({blogTitle, posts, editPost})); 
 });
 
 app.post('/submitEditComplete', async (req, res) =>{     
@@ -122,15 +113,13 @@ app.post('/submitEditComplete', async (req, res) =>{
         
         editPost.cover = result.data.album.image[3]["#text"];
         console.log(editPost.cover);
-    
         console.log(`the editPost has ended`);
         res.redirect('/'); 
-        //res.render('index.ejs', ({blogTitle, posts}));//edit removed
     } catch (error) {
         await console.log(`an error occurs in editPost: ${error.message}`);
         editPost.cover = "/imgs/question-mark.jpg";
         res.render('index.ejs', ({blogTitle, posts, editPost}));
-    }//edit removed
+    };
 });
 
 app.post('/submitDelete', (req, res) =>{ 
@@ -138,42 +127,14 @@ app.post('/submitDelete', (req, res) =>{
     for(var i = 0; i < posts.length ; i++){
         if (posts[i].number > posts[numDelete].number){
             posts[i].number = i;
-        };
-    };
+    }};
     posts.splice(numDelete, 1);
-    res.render('index.ejs', ({blogTitle, posts})); //edit removed
+    res.render('index.ejs', ({blogTitle, posts}));
 });
 
-/*          - Post Creation:
-                - permitir criação de novos posts
-                    - cada post deve ser um container? 
-                    - cada post deve ter o botão de editar e excluir
-                    - function object constructor
-                        - ideal para construir padrões
-                - app.post
-                - ejs loop post.length?
-####################
-*/
 
 
-
-/*          - Post Viewing (HOME):
-                - No Home você pode ver todas as postagens. 
-                - No Home você também têm de ter acesso às funcionalidades.
-####################                
-*/
-
-/*          - Post Update / Delete: 
-                - Deve ser possível editar as postagens
-                    - ter acesso ao texto string registrado
-                - Deve ser possível excluir as postagens
-                    - app.delete
-                    - confirmação de antes de efetuar o delete 
-####################                      
-*/
-
-
-app.post('/login', (req, res) => { //aprimorar login.
+app.post('/login', (req, res) => { //TODO: Aprimorar login; Colocar em separado.
     blogTitle.n = "Led Zeppelin"; 
         posts[0] = new Post();
         posts[0].number = 1;
@@ -244,18 +205,9 @@ app.post('/login', (req, res) => { //aprimorar login.
         posts[9].album = 'Physical Graffiti';
         posts[9].cover = 'https://lastfm.freetls.fastly.net/i/u/300x300/614bbb720f134f8bb69d97dca46474e0.jpg';
         posts[9].text = 'An entire album just for this song.';
-
-    res.redirect('/');//edit removed
-
+    res.redirect('/');
 });
 
 app.listen(port, () =>{
     console.log(`the server is running on port: ${port}`);
 })
-
-
-/*
-    2a fase: fazer um construtor de blog;
-    3a fase: Iloveyoulist. Faça uma carta elogiando boas características e dando oportunidade para
-    a pessoa continuar a escrever características.
-*/

@@ -9,7 +9,7 @@
 
         <% } else { %>
 
-        <img class="imgFeed" , src=<%=posts[i].cover%> , alt="cover of the album <%=posts[i].album%> of <%=blogTitle.n%>">
+        <img class="imgFeed" , src=<%=posts[i].cover%> , onError="this.onerror=null;this.src='/imgs/question-mark.jpg';" , alt="cover of the album <%=posts[i].album%> of <%=blogTitle.n%>">
         <h3><%=posts[i].number%> - <%=posts[i].title%></h3>
         <p>Album: <%=posts[i].album%></p>
         <p><%=posts[i].text%></p>
