@@ -1,10 +1,12 @@
 import express from "express";
 import bodyParser from "body-parser";
 import axios from "axios";
+import dotenv from "dotenv";
 
 const app = express();
 const port = 3000;
-const APIKeyLastFM = "ef77440ab93f633656239025d6bf900c";  //TODO: add .env 
+env.config();
+const APIKeyLastFM = process.env.API_LASTFM_KEY;   
 const APILastFM = "https://ws.audioscrobbler.com/2.0";
 
 app.use(bodyParser.urlencoded({extended: true}));
